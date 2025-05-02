@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor, fireEvent } from '@testing-library/react';
 import CharacterList from './CharacterList';
 import { vi } from 'vitest';
 import * as hook from '../hooks/useCharacters';
@@ -52,5 +52,33 @@ describe('CharacterList', () => {
   test('renders search bar for finding characters', () => {
     render(<CharacterList />);
     expect(screen.getByPlaceholderText(/search characters/i)).toBeInTheDocument();
+  });
+
+  test('renders search bar for finding characters', () => {
+    render(<CharacterList />);
+    expect(screen.getByPlaceholderText(/search characters/i)).toBeInTheDocument();
+  });
+
+  test('filters characters based on search input', async () => {
+    vi.spyOn(hook, 'useCharacters').mockReturnValue({
+      isLoading: false,
+      error: null,
+      characters: [
+        { name: 'Luke Skywalker', uid: '12', url: '' },
+        { name: 'Darth Vader', uid: '14', url: '' },
+      ],
+    });
+
+    render(<CharacterList />);
+
+    await waitFor(() => {
+      expect(screen.getByText(/Luke Skywalker/i)).toBeInTheDocument();
+    });
+
+    const searchInput = screen.getByPlaceholderText(/search characters/i);
+    fireEvent.change(searchInput, { target: { value: 'vader' } });
+
+    expect(screen.queryByText(/Luke Skywalker/i)).not.toBeInTheDocument();
+    expect(screen.getByText(/Darth Vader/i)).toBeInTheDocument();
   });
 });
