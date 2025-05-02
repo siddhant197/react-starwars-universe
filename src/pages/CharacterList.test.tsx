@@ -9,7 +9,7 @@ describe('CharacterList', () => {
   test('renders loading state', () => {
     render(<CharacterList />);
 
-    expect(screen.getByText(/loading characters/i)).toBeInTheDocument();
+    expect(screen.getByRole('status', { name: /loading/i })).toBeInTheDocument();
   });
 
   test('renders error state', () => {

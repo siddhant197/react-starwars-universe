@@ -11,3 +11,7 @@ export type CharactersResponse = {
   total_pages: number;
   results: Character[];
 };
+
+export interface CharacterCardProps {
+  character: Character;
+}
