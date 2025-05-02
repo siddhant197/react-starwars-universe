@@ -3,5 +3,5 @@ import App from './App';
 
 test('renders something', () => {
   render(<App />);
-  expect(screen.getByText(/character list/i)).toBeInTheDocument();
+  expect(screen.getByText(/star wars universe/i)).toBeInTheDocument();
 });

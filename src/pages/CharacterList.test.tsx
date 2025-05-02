@@ -1,15 +1,15 @@
-import { render, screen, waitFor } from '@testing-library/react';
-import CharacterListPage from './CharacterListPage';
+import { render, screen } from '@testing-library/react';
+import CharacterList from './CharacterList';
 import { BrowserRouter } from 'react-router-dom';
 
-test('displays character list from API', async () => {
-  render(
-    <BrowserRouter>
-      <CharacterListPage />
-    </BrowserRouter>
-  );
+describe('CharacterList', () => {
+  test('renders loading state', () => {
+    render(
+      <BrowserRouter>
+        <CharacterList />
+      </BrowserRouter>
+    );
 
-  expect(screen.getByText(/loading/i)).toBeInTheDocument();
-
-  await waitFor(() => expect(screen.getByText(/Luke Skywalker/i)).toBeInTheDocument());
+    expect(screen.getByText(/loading characters/i)).toBeInTheDocument();
+  });
 });

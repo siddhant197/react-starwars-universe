@@ -1,10 +1,11 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import CharacterList from './pages/CharacterList';
 
 function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<div>Character List</div>} />
+        <Route path="/" element={<CharacterList />} />
       </Routes>
     </Router>
   );
