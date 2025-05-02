@@ -23,6 +23,17 @@ describe('CharacterList', () => {
     expect(screen.getByText(/error/i)).toBeInTheDocument();
   });
 
+  test('renders no characters found', () => {
+    vi.spyOn(hook, 'useCharacters').mockReturnValue({
+      isLoading: false,
+      error: null,
+      characters: [],
+    });
+
+    render(<CharacterList />);
+    expect(screen.getByText(/no characters found/i)).toBeInTheDocument();
+  });
+
   test('renders list of characters', () => {
     vi.spyOn(hook, 'useCharacters').mockReturnValue({
       isLoading: false,
@@ -36,5 +47,10 @@ describe('CharacterList', () => {
     render(<CharacterList />);
     expect(screen.getByText(/luke skywalker/i)).toBeInTheDocument();
     expect(screen.getByText(/leia organa/i)).toBeInTheDocument();
+  });
+
+  test('renders search bar for finding characters', () => {
+    render(<CharacterList />);
+    expect(screen.getByPlaceholderText(/search characters/i)).toBeInTheDocument();
   });
 });
