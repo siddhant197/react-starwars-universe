@@ -1,6 +1,7 @@
 import CharacterCard from '../components/CharacterCard';
 import ErrorMessage from '../components/ErrorMessage';
 import LoadingSpinner from '../components/LoadingSpinner';
+import SearchBar from '../components/SearchBar';
 import { useCharacters } from '../hooks/useCharacters';
 
 function CharacterList() {
@@ -11,6 +12,7 @@ function CharacterList() {
       <h1 className="text-4xl font-bold text-center mb-6 text-yellow-400 drop-shadow-md">
         🌌 Star Wars Universe 🌌
       </h1>
+      <SearchBar />
       {isLoading && <LoadingSpinner />}
       {error && <ErrorMessage message={error} />}
       {!isLoading && !error && (
