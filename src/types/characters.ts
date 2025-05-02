@@ -1,7 +1,13 @@
+export interface CharacterProperties {
+  name: string;
+  gender: string;
+  homeworld: string;
+  url: string;
+}
+
 export interface Character {
   uid: string;
-  name: string;
-  url: string;
+  properties: CharacterProperties;
 }
 
 export type CharactersResponse = {
@@ -9,9 +15,6 @@ export type CharactersResponse = {
   previous: string | null;
   total_records: number;
   total_pages: number;
-  results: Character[];
+  results: Character[] | undefined;
+  result: Character[] | undefined;
 };
-
-export interface CharacterCardProps {
-  character: Character;
-}

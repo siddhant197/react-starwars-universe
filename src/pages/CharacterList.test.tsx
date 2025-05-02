@@ -2,8 +2,26 @@ import { render, screen, waitFor, fireEvent } from '@testing-library/react';
 import CharacterList from './CharacterList';
 import { vi } from 'vitest';
 import * as hook from '../hooks/useCharacters';
+import * as api from '../api/fetchCharacters';
 
 vi.mock('../../hooks/useCharacters');
+
+const mockData = {
+  isLoading: false,
+  error: null,
+  characters: [
+    { properties: { name: 'Luke Skywalker', gender: '', homeworld: '', url: '' }, uid: '12' },
+    { properties: { name: 'Darth Vader', gender: '', homeworld: '', url: '' }, uid: '14' },
+  ],
+};
+
+const mockDataForSearch = {
+  characters: [
+    { properties: { name: 'Darth Vader', gender: '', homeworld: '', url: '' }, uid: '14' },
+  ],
+  isLoading: false,
+  error: null,
+};
 
 describe('CharacterList', () => {
   test('renders loading state', () => {
@@ -35,18 +53,11 @@ describe('CharacterList', () => {
   });
 
   test('renders list of characters', () => {
-    vi.spyOn(hook, 'useCharacters').mockReturnValue({
-      isLoading: false,
-      error: null,
-      characters: [
-        { name: 'Luke Skywalker', uid: '12', url: '' },
-        { name: 'Leia Organa', uid: '14', url: '' },
-      ],
-    });
+    vi.spyOn(hook, 'useCharacters').mockReturnValue(mockData);
 
     render(<CharacterList />);
     expect(screen.getByText(/luke skywalker/i)).toBeInTheDocument();
-    expect(screen.getByText(/leia organa/i)).toBeInTheDocument();
+    expect(screen.getByText(/darth vader/i)).toBeInTheDocument();
   });
 
   test('renders search bar for finding characters', () => {
@@ -59,26 +70,20 @@ describe('CharacterList', () => {
     expect(screen.getByPlaceholderText(/search characters/i)).toBeInTheDocument();
   });
 
-  test('filters characters based on search input', async () => {
-    vi.spyOn(hook, 'useCharacters').mockReturnValue({
+  test('calls useCharacters with search term based on input', async () => {
+    const spy = vi.spyOn(hook, 'useCharacters');
+
+    spy.mockReturnValue({
+      characters: [],
       isLoading: false,
       error: null,
-      characters: [
-        { name: 'Luke Skywalker', uid: '12', url: '' },
-        { name: 'Darth Vader', uid: '14', url: '' },
-      ],
     });
 
     render(<CharacterList />);
 
-    await waitFor(() => {
-      expect(screen.getByText(/Luke Skywalker/i)).toBeInTheDocument();
-    });
+    const input = screen.getByPlaceholderText(/search characters/i);
+    fireEvent.change(input, { target: { value: 'vader' } });
 
-    const searchInput = screen.getByPlaceholderText(/search characters/i);
-    fireEvent.change(searchInput, { target: { value: 'vader' } });
-
-    expect(screen.queryByText(/Luke Skywalker/i)).not.toBeInTheDocument();
-    expect(screen.getByText(/Darth Vader/i)).toBeInTheDocument();
+    expect(spy).toHaveBeenCalledWith('vader');
   });
 });
