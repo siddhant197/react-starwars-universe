@@ -1,15 +1,40 @@
 import { render, screen } from '@testing-library/react';
 import CharacterList from './CharacterList';
-import { BrowserRouter } from 'react-router-dom';
+import { vi } from 'vitest';
+import * as hook from '../hooks/useCharacters';
+
+vi.mock('../../hooks/useCharacters');
 
 describe('CharacterList', () => {
   test('renders loading state', () => {
-    render(
-      <BrowserRouter>
-        <CharacterList />
-      </BrowserRouter>
-    );
+    render(<CharacterList />);
 
     expect(screen.getByText(/loading characters/i)).toBeInTheDocument();
+  });
+
+  test('renders error state', () => {
+    vi.spyOn(hook, 'useCharacters').mockReturnValue({
+      characters: [],
+      isLoading: false,
+      error: 'Error',
+    });
+    render(<CharacterList />);
+
+    expect(screen.getByText(/error/i)).toBeInTheDocument();
+  });
+
+  test('renders list of characters', () => {
+    vi.spyOn(hook, 'useCharacters').mockReturnValue({
+      isLoading: false,
+      error: null,
+      characters: [
+        { name: 'Luke Skywalker', uid: '12', url: '' },
+        { name: 'Leia Organa', uid: '14', url: '' },
+      ],
+    });
+
+    render(<CharacterList />);
+    expect(screen.getByText(/luke skywalker/i)).toBeInTheDocument();
+    expect(screen.getByText(/leia organa/i)).toBeInTheDocument();
   });
 });

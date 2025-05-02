@@ -1,11 +1,6 @@
 import { useEffect, useState } from 'react';
 import { fetchCharacters } from '../api/fetchCharacters';
-
-type Character = {
-  name: string;
-  uid: string;
-  url: string;
-};
+import { Character, CharactersResponse } from '../types/characters';
 
 export const useCharacters = () => {
   const [characters, setCharacters] = useState<Character[]>([]);
@@ -15,9 +10,9 @@ export const useCharacters = () => {
   useEffect(() => {
     const getCharacters = async () => {
       try {
-        const charactersData = await fetchCharacters();
+        const charactersData: CharactersResponse = await fetchCharacters();
         setCharacters(charactersData.results);
-      } catch (err) {
+      } catch {
         setError('Failed to fetch characters');
       } finally {
         setIsLoading(false);
