@@ -4,6 +4,7 @@ import ErrorMessage from '../components/ErrorMessage';
 import LoadingSpinner from '../components/LoadingSpinner';
 import SearchBar from '../components/SearchBar';
 import { useCharacters } from '../hooks/useCharacters';
+import Pagination from '../components/Pagination';
 
 function CharacterList() {
   const [searchTerm, setSearchTerm] = useState<string>('');
@@ -17,6 +18,7 @@ function CharacterList() {
       <SearchBar search={searchTerm} onSearchChange={setSearchTerm} />
       {isLoading && <LoadingSpinner />}
       {error && <ErrorMessage message={error} />}
+
       {!isLoading && !error && (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {characters.length > 0 ? (
@@ -28,6 +30,8 @@ function CharacterList() {
           )}
         </div>
       )}
+
+      <Pagination page={1} totalPages={5} setPage={() => {}} />
     </div>
   );
 }
