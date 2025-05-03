@@ -2,7 +2,9 @@ export interface CharacterProperties {
   name: string;
   gender: string;
   homeworld: string;
-  url: string;
+  url?: string;
+  hair_color?: string;
+  eye_color?: string;
 }
 
 export interface Character {
@@ -16,3 +18,7 @@ export type CharactersResponse = {
   results?: Character[] | undefined;
   result?: Character[] | undefined;
 };
+
+export interface CharacterDetails {
+  result: Character;
+}
