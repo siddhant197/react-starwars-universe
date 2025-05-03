@@ -7,13 +7,21 @@ import * as api from '../api/fetchCharacters';
 vi.mock('../../hooks/useCharacters');
 vi.mock('../../api/fetchCharacters');
 
-const mockData = {
+const useCharacterResponseMockData = {
+  characters: [],
+  isLoading: false,
+  error: '',
+  totalPages: 1,
+};
+
+const useCharacterResponseMockData1 = {
   isLoading: false,
   error: null,
   characters: [
     { properties: { name: 'Luke Skywalker', gender: '', homeworld: '', url: '' }, uid: '12' },
     { properties: { name: 'Darth Vader', gender: '', homeworld: '', url: '' }, uid: '14' },
   ],
+  totalPages: 1,
 };
 
 const mockPage1 = {
@@ -43,8 +51,7 @@ describe('CharacterList', () => {
 
   test('renders error state', () => {
     vi.spyOn(hook, 'useCharacters').mockReturnValue({
-      characters: [],
-      isLoading: false,
+      ...useCharacterResponseMockData,
       error: 'Error',
     });
     render(<CharacterList />);
@@ -53,18 +60,14 @@ describe('CharacterList', () => {
   });
 
   test('renders no characters found', () => {
-    vi.spyOn(hook, 'useCharacters').mockReturnValue({
-      isLoading: false,
-      error: null,
-      characters: [],
-    });
+    vi.spyOn(hook, 'useCharacters').mockReturnValue(useCharacterResponseMockData);
 
     render(<CharacterList />);
     expect(screen.getByText(/no characters found/i)).toBeInTheDocument();
   });
 
   test('renders list of characters', () => {
-    vi.spyOn(hook, 'useCharacters').mockReturnValue(mockData);
+    vi.spyOn(hook, 'useCharacters').mockReturnValue(useCharacterResponseMockData1);
 
     render(<CharacterList />);
     expect(screen.getByText(/luke skywalker/i)).toBeInTheDocument();
@@ -84,24 +87,24 @@ describe('CharacterList', () => {
   test('calls useCharacters with search term based on input', () => {
     const spy = vi.spyOn(hook, 'useCharacters');
 
-    spy.mockReturnValue({
-      characters: [],
-      isLoading: false,
-      error: null,
-    });
+    spy.mockReturnValue(useCharacterResponseMockData1);
 
     render(<CharacterList />);
 
     const input = screen.getByPlaceholderText(/search characters/i);
     fireEvent.change(input, { target: { value: 'vader' } });
 
-    expect(spy).toHaveBeenCalledWith('vader');
+    expect(spy).toHaveBeenCalledWith('vader', 1, 9);
   });
 
   test('show next page characters when next is clicked', async () => {
     const useCharactersMock = vi.spyOn(hook, 'useCharacters');
 
-    useCharactersMock.mockReturnValueOnce(mockPage1);
+    useCharactersMock.mockImplementation((search, page, limit) => {
+      if (page === 1) return mockPage1;
+      if (page === 2) return mockPage2;
+      return { characters: [], isLoading: false, error: null, totalPages: 2 };
+    });
 
     render(<CharacterList />);
 
@@ -109,7 +112,6 @@ describe('CharacterList', () => {
       expect(screen.getByText(/luke skywalker/i)).toBeInTheDocument();
     });
 
-    useCharactersMock.mockReturnValueOnce(mockPage2);
     const nextButton = screen.getByRole('button', { name: /next/i });
     fireEvent.click(nextButton);
 
@@ -121,15 +123,21 @@ describe('CharacterList', () => {
   test('show prev page characters when prev is clicked', async () => {
     const useCharactersMock = vi.spyOn(hook, 'useCharacters');
 
-    useCharactersMock.mockReturnValueOnce(mockPage2);
+    useCharactersMock.mockImplementation((search, page, limit) => {
+      if (page === 1) return mockPage1;
+      if (page === 2) return mockPage2;
+      return { characters: [], isLoading: false, error: null, totalPages: 2 };
+    });
 
     render(<CharacterList />);
+
+    const nextButton = screen.getByRole('button', { name: /next/i });
+    fireEvent.click(nextButton);
 
     await waitFor(() => {
       expect(screen.getByText(/darth vader/i)).toBeInTheDocument();
     });
 
-    useCharactersMock.mockReturnValueOnce(mockPage1);
     const prevButton = screen.getByRole('button', { name: /prev/i });
     fireEvent.click(prevButton);
 

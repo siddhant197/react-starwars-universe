@@ -7,8 +7,10 @@ import { useCharacters } from '../hooks/useCharacters';
 import Pagination from '../components/Pagination';
 
 function CharacterList() {
+  const limit = 9;
   const [searchTerm, setSearchTerm] = useState<string>('');
-  const { characters, isLoading, error } = useCharacters(searchTerm);
+  const [page, setPage] = useState(1);
+  const { characters, isLoading, error, totalPages } = useCharacters(searchTerm, page, limit);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-900 via-gray-800 to-gray-900 text-white p-4">
@@ -31,7 +33,7 @@ function CharacterList() {
         </div>
       )}
 
-      <Pagination page={1} totalPages={5} setPage={() => {}} />
+      <Pagination page={page} totalPages={totalPages} setPage={setPage} />
     </div>
   );
 }
