@@ -2,10 +2,8 @@ import { render, screen, waitFor, fireEvent } from '@testing-library/react';
 import CharacterList from './CharacterList';
 import { vi } from 'vitest';
 import * as hook from '../hooks/useCharacters';
-import * as api from '../api/fetchCharacters';
 
 vi.mock('../../hooks/useCharacters');
-vi.mock('../../api/fetchCharacters');
 
 const useCharacterResponseMockData = {
   characters: [],
