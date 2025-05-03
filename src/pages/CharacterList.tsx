@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import CharacterCard from '../components/CharacterCard';
 import ErrorMessage from '../components/ErrorMessage';
 import LoadingSpinner from '../components/LoadingSpinner';
@@ -30,7 +31,13 @@ function CharacterList() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {characters.length > 0 ? (
             characters.map((character) => (
-              <CharacterCard key={character.uid} character={character.properties} />
+              <Link
+                to={`/character/${character.uid}`}
+                key={character.uid}
+                className="hover:scale-105 transition-transform duration-200"
+              >
+                <CharacterCard character={character.properties} fields={['gender', 'homeworld']} />
+              </Link>
             ))
           ) : (
             <p className="text-center text-gray-500 col-span-full">No characters found.</p>

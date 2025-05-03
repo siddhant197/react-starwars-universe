@@ -2,6 +2,7 @@ import { render, screen, waitFor, fireEvent } from '@testing-library/react';
 import CharacterList from './CharacterList';
 import { vi } from 'vitest';
 import * as hook from '../hooks/useCharacters';
+import { MemoryRouter } from 'react-router-dom';
 
 vi.mock('../../hooks/useCharacters');
 
@@ -40,9 +41,16 @@ const mockPage2 = {
   totalPages: 2,
 };
 
+const renderWithRouter = () =>
+  render(
+    <MemoryRouter>
+      <CharacterList />
+    </MemoryRouter>
+  );
+
 describe('CharacterList', () => {
   test('renders loading state', () => {
-    render(<CharacterList />);
+    renderWithRouter();
 
     expect(screen.getByRole('status', { name: /loading/i })).toBeInTheDocument();
   });
@@ -52,7 +60,7 @@ describe('CharacterList', () => {
       ...useCharacterResponseMockData,
       error: 'Error',
     });
-    render(<CharacterList />);
+    renderWithRouter();
 
     expect(screen.getByText(/error/i)).toBeInTheDocument();
   });
@@ -60,25 +68,25 @@ describe('CharacterList', () => {
   test('renders no characters found', () => {
     vi.spyOn(hook, 'useCharacters').mockReturnValue(useCharacterResponseMockData);
 
-    render(<CharacterList />);
+    renderWithRouter();
     expect(screen.getByText(/no characters found/i)).toBeInTheDocument();
   });
 
   test('renders list of characters', () => {
     vi.spyOn(hook, 'useCharacters').mockReturnValue(useCharacterResponseMockData1);
 
-    render(<CharacterList />);
+    renderWithRouter();
     expect(screen.getByText(/luke skywalker/i)).toBeInTheDocument();
     expect(screen.getByText(/darth vader/i)).toBeInTheDocument();
   });
 
   test('renders search bar for finding characters', () => {
-    render(<CharacterList />);
+    renderWithRouter();
     expect(screen.getByPlaceholderText(/search characters/i)).toBeInTheDocument();
   });
 
   test('renders search bar for finding characters', () => {
-    render(<CharacterList />);
+    renderWithRouter();
     expect(screen.getByPlaceholderText(/search characters/i)).toBeInTheDocument();
   });
 
@@ -87,7 +95,7 @@ describe('CharacterList', () => {
 
     spy.mockReturnValue(useCharacterResponseMockData1);
 
-    render(<CharacterList />);
+    renderWithRouter();
 
     const input = screen.getByPlaceholderText(/search characters/i);
     fireEvent.change(input, { target: { value: 'vader' } });
@@ -104,7 +112,7 @@ describe('CharacterList', () => {
       return { characters: [], isLoading: false, error: null, totalPages: 2 };
     });
 
-    render(<CharacterList />);
+    renderWithRouter();
 
     await waitFor(() => {
       expect(screen.getByText(/luke skywalker/i)).toBeInTheDocument();
@@ -127,7 +135,7 @@ describe('CharacterList', () => {
       return { characters: [], isLoading: false, error: null, totalPages: 2 };
     });
 
-    render(<CharacterList />);
+    renderWithRouter();
 
     const nextButton = screen.getByRole('button', { name: /next/i });
     fireEvent.click(nextButton);
@@ -142,5 +150,21 @@ describe('CharacterList', () => {
     await waitFor(() => {
       expect(screen.getByText(/luke skywalker/i)).toBeInTheDocument();
     });
+  });
+
+  test('each character card links to the correct character detail route', () => {
+    vi.spyOn(hook, 'useCharacters').mockReturnValue(useCharacterResponseMockData1);
+
+    renderWithRouter();
+    const links = screen.getAllByRole('link');
+    expect(links[0]).toHaveAttribute('href', '/character/12');
+    expect(links[1]).toHaveAttribute('href', '/character/14');
+  });
+
+  test('does not show pagination when no characters', () => {
+    vi.spyOn(hook, 'useCharacters').mockReturnValue(useCharacterResponseMockData);
+
+    renderWithRouter();
+    expect(screen.queryByRole('button', { name: /next/i })).not.toBeInTheDocument();
   });
 });
