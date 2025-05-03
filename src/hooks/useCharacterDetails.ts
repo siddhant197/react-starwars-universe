@@ -1,34 +1,40 @@
-import { useEffect, useState } from 'react';
-import { Character, CharacterDetails } from '../types/characters';
-import { fetchCharacterDetails } from '../api/fetchCharacterDetails';
+import { useMemo } from 'react';
+import { CharacterDetails } from '../types/characters';
+import { useAllFilms, useAllStarships, useCharacterProperties } from '../api/queries';
+import { FilmResponse } from '../types/films';
+import { StarshipResponse } from '../types/starships';
 
 export const useCharacterDetails = (id?: string) => {
-  const [character, setCharacter] = useState<Character>();
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
+  const {
+    data: character,
+    isLoading: loadingCharacter,
+    error: errorCharacter,
+  } = useCharacterProperties(id || '');
+  const { data: films, isLoading: loadingFilms, error: errorFilms } = useAllFilms();
+  const { data: starships, isLoading: loadingStarships, error: errorStarships } = useAllStarships();
+  const isLoading = loadingCharacter || loadingFilms || loadingStarships;
+  const error = errorCharacter?.message || errorFilms?.message || errorStarships?.message || null;
 
-  useEffect(() => {
-    if (!id) {
-      setError('Missing character ID');
-      setIsLoading(false);
-      return;
-    }
+  const details: CharacterDetails | undefined = useMemo(() => {
+    if (!character || !films || !starships) return undefined;
 
-    const fetchData = async (id: string) => {
-      try {
-        setIsLoading(true);
-        const data: CharacterDetails = await fetchCharacterDetails(id);
-        setCharacter(data.result);
-        setError(null);
-      } catch {
-        setError('Failed to fetch characters');
-      } finally {
-        setIsLoading(false);
-      }
+    const characterUrl = character.properties.url;
+
+    const filteredFilmsTitles = films
+      .filter((film: FilmResponse) => film.characters.includes(characterUrl))
+      .map((film) => film.title);
+
+    const filteredStarshipsNames = starships
+      .filter((starship: StarshipResponse) => starship.pilots.includes(characterUrl))
+      .map((starship) => starship.name);
+
+    return {
+      uid: character.uid,
+      properties: character.properties,
+      films: filteredFilmsTitles,
+      starships: filteredStarshipsNames,
     };
+  }, [character, films, starships]);
 
-    fetchData(id);
-  }, [id]);
-
-  return { character, isLoading, error };
+  return { details, isLoading, error };
 };

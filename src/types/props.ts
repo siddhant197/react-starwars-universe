@@ -2,6 +2,9 @@ import { CharacterProperties } from './characters';
 
 export interface CharacterCardProps {
   character: CharacterProperties;
+  fields?: (keyof CharacterProperties)[];
+  films?: string[];
+  starships?: string[];
 }
 
 export type SearchBarProps = {
