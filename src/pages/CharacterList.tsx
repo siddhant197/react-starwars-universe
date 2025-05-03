@@ -7,17 +7,22 @@ import { useCharacters } from '../hooks/useCharacters';
 import Pagination from '../components/Pagination';
 
 function CharacterList() {
-  const limit = 9;
+  const limit = 12;
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [page, setPage] = useState(1);
   const { characters, isLoading, error, totalPages } = useCharacters(searchTerm, page, limit);
+
+  const searchCharacter = (value: string) => {
+    setSearchTerm(value);
+    setPage(1);
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-900 via-gray-800 to-gray-900 text-white p-4">
       <h1 className="text-4xl font-bold text-center mb-6 text-yellow-400 drop-shadow-md">
         🌌 Star Wars Universe 🌌
       </h1>
-      <SearchBar search={searchTerm} onSearchChange={setSearchTerm} />
+      <SearchBar search={searchTerm} onSearchChange={(value) => searchCharacter(value)} />
       {isLoading && <LoadingSpinner />}
       {error && <ErrorMessage message={error} />}
 
@@ -33,7 +38,9 @@ function CharacterList() {
         </div>
       )}
 
-      <Pagination page={page} totalPages={totalPages} setPage={setPage} />
+      {!isLoading && !error && characters.length > 0 && (
+        <Pagination page={page} totalPages={totalPages} setPage={setPage} />
+      )}
     </div>
   );
 }

@@ -94,7 +94,7 @@ describe('CharacterList', () => {
     const input = screen.getByPlaceholderText(/search characters/i);
     fireEvent.change(input, { target: { value: 'vader' } });
 
-    expect(spy).toHaveBeenCalledWith('vader', 1, 9);
+    expect(spy).toHaveBeenCalledWith('vader', 1, 12);
   });
 
   test('show next page characters when next is clicked', async () => {
