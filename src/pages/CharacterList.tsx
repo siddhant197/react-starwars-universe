@@ -6,6 +6,7 @@ import LoadingSpinner from '../components/LoadingSpinner';
 import SearchBar from '../components/SearchBar';
 import { useCharacters } from '../hooks/useCharacters';
 import Pagination from '../components/Pagination';
+import Header from '../components/Header';
 
 function CharacterList() {
   const limit = 12;
@@ -20,9 +21,7 @@ function CharacterList() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-900 via-gray-800 to-gray-900 text-white p-4">
-      <h1 className="text-4xl font-bold text-center mb-6 text-yellow-400 drop-shadow-md">
-        🌌 Star Wars Universe 🌌
-      </h1>
+      <Header heading="star wars universe" subheading="explore the galaxy" />
       <SearchBar search={searchTerm} onSearchChange={(value) => searchCharacter(value)} />
       {isLoading && <LoadingSpinner />}
       {error && <ErrorMessage message={error} />}
