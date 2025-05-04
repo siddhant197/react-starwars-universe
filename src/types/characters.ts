@@ -5,6 +5,7 @@ export interface CharacterProperties {
   url: string;
   hair_color?: string;
   eye_color?: string;
+  height?: string;
 }
 
 export interface Character {
