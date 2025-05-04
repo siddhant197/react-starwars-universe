@@ -3,6 +3,7 @@ import CharacterList from './CharacterList';
 import { vi } from 'vitest';
 import * as hook from '../hooks/useCharacters';
 import { MemoryRouter } from 'react-router-dom';
+import { FavoritesProvider } from '../context/FavoritesContext';
 
 vi.mock('../../hooks/useCharacters');
 
@@ -43,9 +44,11 @@ const mockPage2 = {
 
 const renderWithRouter = () =>
   render(
-    <MemoryRouter>
-      <CharacterList />
-    </MemoryRouter>
+    <FavoritesProvider>
+      <MemoryRouter>
+        <CharacterList />
+      </MemoryRouter>
+    </FavoritesProvider>
   );
 
 describe('CharacterList', () => {

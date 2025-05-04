@@ -3,16 +3,19 @@ import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import CharacterDetails from './CharacterDetails';
 import * as hook from '../hooks/useCharacterDetails';
 import { vi } from 'vitest';
+import { FavoritesProvider } from '../context/FavoritesContext';
 
 vi.mock('../hooks/useCharacterDetails');
 
 const withRouter = () =>
   render(
-    <MemoryRouter initialEntries={['/character/12']}>
-      <Routes>
-        <Route path="/character/:id" element={<CharacterDetails />} />
-      </Routes>
-    </MemoryRouter>
+    <FavoritesProvider>
+      <MemoryRouter initialEntries={['/character/12']}>
+        <Routes>
+          <Route path="/character/:id" element={<CharacterDetails />} />
+        </Routes>
+      </MemoryRouter>
+    </FavoritesProvider>
   );
 
 const mockCharacterData = {
