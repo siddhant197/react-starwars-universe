@@ -4,5 +4,6 @@ export const fieldLabels = {
   hair_color: 'Hair Color',
   eye_color: 'Eye Color',
   homeworld: 'Home Planet',
+  height: 'Height',
   url: '',
 };
