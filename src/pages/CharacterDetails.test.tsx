@@ -1,11 +1,17 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import CharacterDetails from './CharacterDetails';
 import * as hook from '../hooks/useCharacterDetails';
+import * as favoritesHook from '../context/FavoritesContext';
+import { useAddFavorite, useRemoveFavorite } from '../hooks/useFavorites';
 import { vi } from 'vitest';
 import { FavoritesProvider } from '../context/FavoritesContext';
 
 vi.mock('../hooks/useCharacterDetails');
+vi.mock('../hooks/useFavorites', () => ({
+  useAddFavorite: vi.fn(),
+  useRemoveFavorite: vi.fn(),
+}));
 
 const withRouter = () =>
   render(
@@ -37,6 +43,10 @@ const mockCharacterData = {
 };
 
 describe('CharacterDetails', () => {
+  beforeEach(() => {
+    vi.resetAllMocks();
+  });
+
   test('renders loading icon when fetching details', async () => {
     vi.spyOn(hook, 'useCharacterDetails').mockReturnValue({
       ...mockCharacterData,
@@ -68,7 +78,7 @@ describe('CharacterDetails', () => {
   test('renders "No details found" when details object is empty', async () => {
     vi.spyOn(hook, 'useCharacterDetails').mockReturnValue({
       ...mockCharacterData,
-      details: {},
+      details: undefined,
     });
 
     withRouter();
@@ -110,5 +120,35 @@ describe('CharacterDetails', () => {
 
     expect(screen.queryByText(/films:/i)).not.toBeInTheDocument();
     expect(screen.queryByText(/starships:/i)).not.toBeInTheDocument();
+  });
+
+  test('shows "add to favorites" if not already favorited', () => {
+    vi.spyOn(hook, 'useCharacterDetails').mockReturnValue(mockCharacterData);
+    withRouter();
+    const button = screen.getByRole('button', { name: /add to favorites/i });
+    expect(button).toBeInTheDocument();
+  });
+
+  test('shows "remove from favorites" if already favorited', () => {
+    vi.spyOn(hook, 'useCharacterDetails').mockReturnValue(mockCharacterData);
+    vi.spyOn(favoritesHook, 'useFavorites').mockReturnValue({ state: { favorites: ['12'] } });
+    withRouter();
+    const button = screen.getByRole('button', { name: /remove from favorites/i });
+    expect(button).toBeInTheDocument();
+  });
+
+  test('clicking "add to favorites" calls useAddFavorite', () => {
+    vi.spyOn(hook, 'useCharacterDetails').mockReturnValue(mockCharacterData);
+    withRouter();
+    fireEvent.click(screen.getByRole('button', { name: /add to favorites/i }));
+    expect(useAddFavorite).toHaveBeenCalled();
+  });
+
+  test('clicking "remove from favorites" calls useRemoveFavorite', () => {
+    vi.spyOn(hook, 'useCharacterDetails').mockReturnValue(mockCharacterData);
+    vi.spyOn(favoritesHook, 'useFavorites').mockReturnValue({ state: { favorites: ['12'] } });
+    withRouter();
+    fireEvent.click(screen.getByRole('button', { name: /remove from favorites/i }));
+    expect(useRemoveFavorite).toHaveBeenCalled();
   });
 });
