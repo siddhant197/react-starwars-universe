@@ -55,4 +55,37 @@ describe('FavoritesList', () => {
     renderWithProviders();
     expect(screen.getByText(/No favorites added yet/i)).toBeInTheDocument();
   });
+
+  test('renders favorite characters', () => {
+    vi.spyOn(hook, 'useFavoriteCharacters').mockReturnValue({
+      characters: [
+        {
+          uid: '1',
+          properties: {
+            name: 'Luke Skywalker',
+            gender: 'male',
+            homeworld: '',
+            url: '',
+          },
+        },
+        {
+          uid: '2',
+          properties: {
+            name: 'Darth Vader',
+            gender: 'female',
+            homeworld: '',
+            url: '',
+          },
+        },
+      ],
+      isLoading: false,
+      error: null,
+    });
+
+    renderWithProviders();
+    expect(screen.getByText('/luke skywalker/i')).toBeInTheDocument();
+    expect(screen.getByText('/darth vader/i')).toBeInTheDocument();
+    expect(screen.getByText('/male/i')).toBeInTheDocument();
+    expect(screen.getByText('/female/i')).toBeInTheDocument();
+  });
 });
