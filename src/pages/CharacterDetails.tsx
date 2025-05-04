@@ -5,6 +5,7 @@ import ErrorMessage from '../components/ErrorMessage';
 import CharacterCard from '../components/CharacterCard';
 import { useAddFavorite, useRemoveFavorite } from '../hooks/useFavorites';
 import { useFavorites } from '../context/FavoritesContext';
+import Header from '../components/Header';
 
 function CharacterDetails() {
   const { id = '' } = useParams();
@@ -30,6 +31,7 @@ function CharacterDetails() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-900 via-gray-800 to-gray-900 text-white p-4">
+      <Header heading="star wars universe" subheading="explore the galaxy" />
       <h2 className="text-xl text-center font-semibold text-blue-600 mt-8 mb-4 uppercase tracking-wider">
         Character Details
       </h2>

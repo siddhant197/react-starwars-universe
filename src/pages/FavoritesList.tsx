@@ -25,8 +25,8 @@ function FavoritesList() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-900 via-gray-800 to-gray-900 text-white p-4">
       <Header heading="star wars universe" subheading="explore the galaxy" />
-      <h2 className="text-xl text-center font-semibold text-blue-600 mb-4 uppercase tracking-wider">
-        Your Favorites
+      <h2 className="text-xl font-semibold text-blue-600 mb-4 capitalize tracking-wider">
+        List of your Favorite Characters
       </h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {favorites.length > 0 ? (
