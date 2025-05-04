@@ -26,7 +26,6 @@ function CharacterDetails() {
   };
 
   const isFavorite = favorites.some((character) => character.uid === id);
-  console.log(isFavorite);
   const isFetched = !isLoading && !isFetching && !error;
 
   return (
