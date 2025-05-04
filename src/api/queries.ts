@@ -1,20 +1,12 @@
 import { useQuery } from '@tanstack/react-query';
 import { FilmResponse } from '../types/films';
 import { StarshipResponse } from '../types/starships';
-import { Character } from '../types/characters';
+import { fetchCharacterById } from './fetchCharacterById';
 
 export const useCharacterProperties = (id: string) => {
   return useQuery({
     queryKey: ['character', id],
-    queryFn: async (): Promise<Character> => {
-      const response = await fetch(`https://swapi.tech/api/people/${id}`);
-      if (!response.ok) throw new Error('Failed to fetch character details');
-      const { result } = await response.json();
-      return {
-        uid: result.uid,
-        properties: result.properties,
-      };
-    },
+    queryFn: () => fetchCharacterById(id),
     enabled: !!id,
     staleTime: Infinity,
   });

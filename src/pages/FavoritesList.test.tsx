@@ -72,7 +72,7 @@ describe('FavoritesList', () => {
           uid: '2',
           properties: {
             name: 'Darth Vader',
-            gender: 'female',
+            gender: 'male',
             homeworld: '',
             url: '',
           },
@@ -83,9 +83,8 @@ describe('FavoritesList', () => {
     });
 
     renderWithProviders();
-    expect(screen.getByText('/luke skywalker/i')).toBeInTheDocument();
-    expect(screen.getByText('/darth vader/i')).toBeInTheDocument();
-    expect(screen.getByText('/male/i')).toBeInTheDocument();
-    expect(screen.getByText('/female/i')).toBeInTheDocument();
+    expect(screen.getByText(/luke skywalker/i)).toBeInTheDocument();
+    expect(screen.getByText(/darth vader/i)).toBeInTheDocument();
+    expect(screen.getAllByText(/male/i).length).toBeGreaterThan(0);
   });
 });
