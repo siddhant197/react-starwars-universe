@@ -4,12 +4,14 @@ import { vi } from 'vitest';
 import * as hook from '../hooks/useCharacters';
 import { MemoryRouter } from 'react-router-dom';
 import { FavoritesProvider } from '../context/FavoritesContext';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 vi.mock('../../hooks/useCharacters');
 
 const useCharacterResponseMockData = {
   characters: [],
   isLoading: false,
+  isFetching: false,
   error: '',
   totalPages: 1,
 };
@@ -42,13 +44,17 @@ const mockPage2 = {
   totalPages: 2,
 };
 
+const queryClient = new QueryClient();
+
 const renderWithProviders = () =>
   render(
-    <FavoritesProvider>
-      <MemoryRouter>
-        <CharacterList />
-      </MemoryRouter>
-    </FavoritesProvider>
+    <QueryClientProvider client={queryClient}>
+      <FavoritesProvider>
+        <MemoryRouter>
+          <CharacterList />
+        </MemoryRouter>
+      </FavoritesProvider>
+    </QueryClientProvider>
   );
 
 describe('CharacterList', () => {

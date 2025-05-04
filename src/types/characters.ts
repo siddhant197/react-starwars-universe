@@ -2,6 +2,7 @@ export interface CharacterProperties {
   name: string;
   gender: string;
   homeworld: string;
+  homeworldName?: string;
   url: string;
   hair_color?: string;
   eye_color?: string;

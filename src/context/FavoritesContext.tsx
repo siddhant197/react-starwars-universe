@@ -1,26 +1,48 @@
-import React, { createContext, useReducer, ReactNode } from 'react';
-import { getFavorites, addFavorite, removeFavorite } from '../api/favoritesService';
+import { createContext, ReactNode, useReducer } from 'react';
+import { addFavorite, getFavorites, removeFavorite, updateFavorite } from '../api/favoritesService';
+import { Character } from '../types/characters';
+import React from 'react';
 
-const initialState = {
+type State = {
+  favorites: Partial<Character>[];
+};
+
+type Action =
+  | { type: 'ADD_FAVORITE'; character: Partial<Character> }
+  | { type: 'REMOVE_FAVORITE'; uid: string }
+  | { type: 'UPDATE_FAVORITE'; uid: string; updates: Partial<Character> };
+
+const initialState: State = {
   favorites: getFavorites(),
 };
 
-type Action = { type: 'ADD_FAVORITE'; uid: string } | { type: 'REMOVE_FAVORITE'; uid: string };
-
-const favoritesReducer = (state: typeof initialState, action: Action) => {
+const favoritesReducer = (state: State, action: Action): State => {
   switch (action.type) {
     case 'ADD_FAVORITE':
-      addFavorite(action.uid);
-      return { ...state, favorites: [...state.favorites, action.uid] };
+      addFavorite(action.character);
+      return { ...state, favorites: [...state.favorites, action.character] };
     case 'REMOVE_FAVORITE':
       removeFavorite(action.uid);
-      return { ...state, favorites: state.favorites.filter((uid) => uid !== action.uid) };
+      return { ...state, favorites: state.favorites.filter((char) => char.uid !== action.uid) };
+    case 'UPDATE_FAVORITE':
+      updateFavorite(action.uid, action.updates);
+      return {
+        ...state,
+        favorites: state.favorites.map((char) =>
+          char.uid === action.uid ? { ...char, ...action.updates } : char
+        ),
+      };
     default:
       return state;
   }
 };
 
-const FavoritesContext = createContext<any | undefined>(undefined);
+type FavoritesContextType = {
+  state: State;
+  dispatch: React.Dispatch<Action>;
+};
+
+const FavoritesContext = createContext<FavoritesContextType | undefined>(undefined);
 
 export const FavoritesProvider = ({ children }: { children: ReactNode }) => {
   const [state, dispatch] = useReducer(favoritesReducer, initialState);

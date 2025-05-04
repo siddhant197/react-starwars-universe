@@ -1,50 +1,49 @@
-import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { render, screen } from '@testing-library/react';
+import { MemoryRouter } from 'react-router-dom';
+import { vi } from 'vitest';
 import App from './App';
-import CharacterDetails from './pages/CharacterDetails';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { FavoritesProvider } from './context/FavoritesContext';
-import FavoritesList from './pages/FavoritesList';
 
-const queryClient = new QueryClient();
+// Mock the page components
+vi.mock('./pages/CharacterList', () => ({
+  default: () => <div>CharacterList</div>,
+}));
+
+vi.mock('./pages/CharacterDetails', () => ({
+  default: () => <div>CharacterDetails</div>,
+}));
+
+vi.mock('./pages/FavoritesList', () => ({
+  default: () => <div>FavoritesList</div>,
+}));
 
 describe('App', () => {
-  test('renders home page', () => {
-    render(<App />);
-    expect(screen.getByText(/star wars universe/i)).toBeInTheDocument();
-  });
-
-  test('renders CharacterDetails page when navigating to /character/:id', () => {
+  test('renders CharacterList for root route', () => {
     render(
-      <QueryClientProvider client={queryClient}>
-        <FavoritesProvider>
-          <MemoryRouter initialEntries={['/character/12']}>
-            <Routes>
-              <Route path="/*" element={<App />} />
-              <Route path="/character/:id" element={<CharacterDetails />} />
-            </Routes>
-          </MemoryRouter>
-        </FavoritesProvider>
-      </QueryClientProvider>
+      <MemoryRouter initialEntries={['/']}>
+        <App />
+      </MemoryRouter>
     );
 
-    expect(screen.getByText(/character details/i)).toBeInTheDocument();
+    expect(screen.getByText('CharacterList')).toBeInTheDocument();
   });
 
-  test('renders FavoritesList page when navigating to /favorites', () => {
+  test('renders CharacterDetails for character route', () => {
     render(
-      <QueryClientProvider client={queryClient}>
-        <FavoritesProvider>
-          <MemoryRouter initialEntries={['/favorites']}>
-            <Routes>
-              <Route path="/*" element={<App />} />
-              <Route path="/favorites" element={<FavoritesList />} />
-            </Routes>
-          </MemoryRouter>
-        </FavoritesProvider>
-      </QueryClientProvider>
+      <MemoryRouter initialEntries={['/character/1']}>
+        <App />
+      </MemoryRouter>
     );
 
-    expect(screen.getByText(/your favorites/i)).toBeInTheDocument();
+    expect(screen.getByText('CharacterDetails')).toBeInTheDocument();
+  });
+
+  test('renders FavoritesList for favorites route', () => {
+    render(
+      <MemoryRouter initialEntries={['/favorites']}>
+        <App />
+      </MemoryRouter>
+    );
+
+    expect(screen.getByText('FavoritesList')).toBeInTheDocument();
   });
 });

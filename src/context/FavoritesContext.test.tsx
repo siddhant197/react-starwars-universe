@@ -1,16 +1,19 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import { FavoritesProvider, useFavorites } from './FavoritesContext';
+import { Character } from '../types/characters';
 
 const TestComponent = () => {
   const { state, dispatch } = useFavorites();
 
   return (
     <div>
-      <button onClick={() => dispatch({ type: 'ADD_FAVORITE', uid: '12' })}>Add Luke</button>
+      <button onClick={() => dispatch({ type: 'ADD_FAVORITE', character: { uid: '12' } })}>
+        Add Luke
+      </button>
       <button onClick={() => dispatch({ type: 'REMOVE_FAVORITE', uid: '12' })}>Remove Luke</button>
       <ul>
-        {state.favorites.map((fav: string) => (
-          <li key={fav}>{fav}</li>
+        {state.favorites.map((fav: Partial<Character>) => (
+          <li key={fav.uid}>{fav.uid}</li>
         ))}
       </ul>
     </div>

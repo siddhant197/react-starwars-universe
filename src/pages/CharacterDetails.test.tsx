@@ -41,6 +41,7 @@ const mockCharacterData = {
     starships: [],
   },
   isLoading: false,
+  isFetching: false,
   error: '',
 };
 
@@ -133,7 +134,10 @@ describe('CharacterDetails', () => {
 
   test('shows "remove from favorites" if already favorited', () => {
     vi.spyOn(hook, 'useCharacterDetails').mockReturnValue(mockCharacterData);
-    vi.spyOn(favoritesHook, 'useFavorites').mockReturnValue({ state: { favorites: ['12'] } });
+    vi.spyOn(favoritesHook, 'useFavorites').mockReturnValue({
+      state: { favorites: [mockCharacterData.details] },
+      dispatch: vi.fn(),
+    });
     renderWithProviders();
     const button = screen.getByRole('button', { name: /remove from favorites/i });
     expect(button).toBeInTheDocument();
@@ -148,7 +152,10 @@ describe('CharacterDetails', () => {
 
   test('clicking "remove from favorites" calls useRemoveFavorite', () => {
     vi.spyOn(hook, 'useCharacterDetails').mockReturnValue(mockCharacterData);
-    vi.spyOn(favoritesHook, 'useFavorites').mockReturnValue({ state: { favorites: ['12'] } });
+    vi.spyOn(favoritesHook, 'useFavorites').mockReturnValue({
+      state: { favorites: [mockCharacterData.details] },
+      dispatch: vi.fn(),
+    });
     renderWithProviders();
     fireEvent.click(screen.getByRole('button', { name: /remove from favorites/i }));
     expect(removeFavoriteMock).toHaveBeenCalled();
