@@ -82,4 +82,14 @@ describe('FavoritesList', () => {
     fireEvent.click(screen.getByRole('button', { name: /remove/i }));
     expect(removeFavoriteMock).toHaveBeenCalled();
   });
+
+  test('if editable then show input', () => {
+    vi.spyOn(favoritesHook, 'useFavorites').mockReturnValue({
+      state: { favorites: [mockData[0]] },
+      dispatch: vi.fn(),
+    });
+
+    renderWithProviders();
+    expect(screen.getByDisplayValue(/Luke Skywalker/i)).toBeInTheDocument();
+  });
 });
