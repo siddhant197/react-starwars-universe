@@ -1,5 +1,5 @@
 import { useFavorites } from '../context/FavoritesContext';
-import { Character } from '../types/characters';
+import { Character, CharacterProperties } from '../types/characters';
 
 export const useAddFavorite = () => {
   const { dispatch } = useFavorites();
@@ -13,6 +13,6 @@ export const useRemoveFavorite = () => {
 
 export const useUpdateFavorite = () => {
   const { dispatch } = useFavorites();
-  return (uid: string, updates: Partial<Character>) =>
+  return (uid: string, updates: Partial<CharacterProperties>) =>
     dispatch({ type: 'UPDATE_FAVORITE', uid, updates });
 };

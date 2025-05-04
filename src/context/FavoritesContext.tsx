@@ -1,6 +1,6 @@
 import { createContext, ReactNode, useReducer } from 'react';
 import { addFavorite, getFavorites, removeFavorite, updateFavorite } from '../api/favoritesService';
-import { Character } from '../types/characters';
+import { Character, CharacterProperties } from '../types/characters';
 import React from 'react';
 
 type State = {
@@ -10,7 +10,7 @@ type State = {
 type Action =
   | { type: 'ADD_FAVORITE'; character: Partial<Character> }
   | { type: 'REMOVE_FAVORITE'; uid: string }
-  | { type: 'UPDATE_FAVORITE'; uid: string; updates: Partial<Character> };
+  | { type: 'UPDATE_FAVORITE'; uid: string; updates: Partial<CharacterProperties> };
 
 const initialState: State = {
   favorites: getFavorites(),
@@ -29,7 +29,9 @@ const favoritesReducer = (state: State, action: Action): State => {
       return {
         ...state,
         favorites: state.favorites.map((char) =>
-          char.uid === action.uid ? { ...char, ...action.updates } : char
+          char.uid === action.uid
+            ? { uid: char.uid, properties: { ...char.properties, ...action.updates } }
+            : char
         ),
       };
     default:

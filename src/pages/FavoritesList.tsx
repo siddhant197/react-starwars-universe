@@ -1,21 +1,31 @@
 import CharacterCard from '../components/CharacterCard';
-import { useRemoveFavorite } from '../hooks/useFavorites';
+import { useRemoveFavorite, useUpdateFavorite } from '../hooks/useFavorites';
 import Header from '../components/Header';
 import { useFavorites } from '../context/FavoritesContext';
 
 function FavoritesList() {
   const { state } = useFavorites();
   const { favorites } = state;
-  const removeFromFavorite = useRemoveFavorite();
+  const removeFavorite = useRemoveFavorite();
+  const updateFavorite = useUpdateFavorite();
+
+  const handleUpdateFavorite = (uid: string, field: string, value: string) => {
+    console.log({
+      [field]: value,
+    });
+    updateFavorite(uid, {
+      [field]: value,
+    });
+  };
 
   const handleRemoveFavorite = (uid: string) => {
-    removeFromFavorite(uid);
+    removeFavorite(uid);
   };
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-900 via-gray-800 to-gray-900 text-white p-4">
       <Header heading="star wars universe" subheading="explore the galaxy" />
-      <h2 className="text-xl text-center font-semibold text-blue-600 mt-8 mb-4 uppercase tracking-wider">
+      <h2 className="text-xl text-center font-semibold text-blue-600 mb-4 uppercase tracking-wider">
         Your Favorites
       </h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -24,7 +34,10 @@ function FavoritesList() {
             <div key={character.uid} className="relative group">
               <CharacterCard
                 key={character.uid}
+                uid={character.uid}
                 character={character.properties}
+                editable={['gender', 'height']}
+                onEdit={handleUpdateFavorite}
                 fields={['height', 'gender', 'homeworldName']}
               />
               <button

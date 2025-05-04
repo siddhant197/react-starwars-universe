@@ -4,6 +4,7 @@ import { FavoritesProvider } from '../context/FavoritesContext';
 import * as favoritesHook from '../context/FavoritesContext';
 import { vi } from 'vitest';
 import FavoritesList from './FavoritesList';
+import * as favoritesHooksModule from '../hooks/useFavorites';
 
 const mockData = [
   {
@@ -28,10 +29,12 @@ const mockData = [
 
 const addFavoriteMock = vi.fn();
 const removeFavoriteMock = vi.fn();
+const updateFavoriteMock = vi.fn();
 
 vi.mock('../hooks/useFavorites', () => ({
   useAddFavorite: vi.fn(() => addFavoriteMock),
   useRemoveFavorite: vi.fn(() => removeFavoriteMock),
+  useUpdateFavorite: vi.fn(() => updateFavoriteMock),
 }));
 
 const renderWithProviders = () => {
@@ -69,7 +72,6 @@ describe('FavoritesList', () => {
     renderWithProviders();
     expect(screen.getByText(/luke skywalker/i)).toBeInTheDocument();
     expect(screen.getByText(/darth vader/i)).toBeInTheDocument();
-    expect(screen.getAllByText(/male/i).length).toBeGreaterThan(0);
   });
 
   test('clicking "remove" calls useRemoveFavorite', () => {
@@ -84,12 +86,21 @@ describe('FavoritesList', () => {
   });
 
   test('if editable then show input', () => {
+    const updateFavoriteMock = vi.fn();
+
     vi.spyOn(favoritesHook, 'useFavorites').mockReturnValue({
       state: { favorites: [mockData[0]] },
       dispatch: vi.fn(),
     });
 
+    vi.mocked(favoritesHooksModule.useUpdateFavorite).mockReturnValue(updateFavoriteMock);
+
     renderWithProviders();
-    expect(screen.getByDisplayValue(/Luke Skywalker/i)).toBeInTheDocument();
+
+    const genderInput = screen.getByDisplayValue('male') as HTMLInputElement;
+    fireEvent.change(genderInput, { target: { value: 'female' } });
+    fireEvent.blur(genderInput);
+
+    expect(updateFavoriteMock).toHaveBeenCalledWith('1', { gender: 'female' });
   });
 });

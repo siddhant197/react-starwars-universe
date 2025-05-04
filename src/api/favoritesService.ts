@@ -1,4 +1,4 @@
-import { Character } from '../types/characters';
+import { Character, CharacterProperties } from '../types/characters';
 
 const FAVORITES_KEY = 'favorites';
 
@@ -24,7 +24,9 @@ export const removeFavorite = (uid: string): void => {
   saveFavorites(favorites);
 };
 
-export const updateFavorite = (uid: string, updates: Partial<Character>): void => {
-  const favorites = getFavorites().map((fav) => (fav.uid === uid ? { ...fav, ...updates } : fav));
+export const updateFavorite = (uid: string, updates: Partial<CharacterProperties>): void => {
+  const favorites = getFavorites().map((fav) =>
+    fav.uid === uid ? { uid, properties: { ...fav.properties, ...updates } } : fav
+  );
   saveFavorites(favorites);
 };
