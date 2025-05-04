@@ -2,9 +2,15 @@ import LoadingSpinner from '../components/LoadingSpinner';
 import ErrorMessage from '../components/ErrorMessage';
 import CharacterCard from '../components/CharacterCard';
 import { useFavoriteCharacters } from '../hooks/useFavoriteCharacters';
+import { useRemoveFavorite } from '../hooks/useFavorites';
 
 function FavoritesList() {
   const { characters, isLoading, error } = useFavoriteCharacters();
+  const removeFromFavorite = useRemoveFavorite();
+
+  const handleRemoveFavorite = (uid: string) => {
+    removeFromFavorite(uid);
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-900 via-gray-800 to-gray-900 text-white p-4">
@@ -27,7 +33,7 @@ function FavoritesList() {
                   fields={['height', 'gender', 'homeworld']}
                 />
                 <button
-                  onClick={() => {}}
+                  onClick={() => handleRemoveFavorite(character.uid)}
                   className="absolute top-2 right-2 bg-red-600 hover:bg-red-700 text-white text-xs px-2 py-1 rounded transition-opacity group-hover:opacity-100"
                 >
                   Remove

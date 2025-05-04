@@ -11,10 +11,10 @@ const favoritesReducer = (state: typeof initialState, action: Action) => {
   switch (action.type) {
     case 'ADD_FAVORITE':
       addFavorite(action.uid);
-      return { ...state, favorites: getFavorites() };
+      return { ...state, favorites: [...state.favorites, action.uid] };
     case 'REMOVE_FAVORITE':
       removeFavorite(action.uid);
-      return { ...state, favorites: getFavorites() };
+      return { ...state, favorites: state.favorites.filter((uid) => uid !== action.uid) };
     default:
       return state;
   }

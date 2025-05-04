@@ -7,10 +7,13 @@ import { useAddFavorite, useRemoveFavorite } from '../hooks/useFavorites';
 import { vi } from 'vitest';
 import { FavoritesProvider } from '../context/FavoritesContext';
 
+const addFavoriteMock = vi.fn();
+const removeFavoriteMock = vi.fn();
+
 vi.mock('../hooks/useCharacterDetails');
 vi.mock('../hooks/useFavorites', () => ({
-  useAddFavorite: vi.fn(),
-  useRemoveFavorite: vi.fn(),
+  useAddFavorite: vi.fn(() => addFavoriteMock),
+  useRemoveFavorite: vi.fn(() => removeFavoriteMock),
 }));
 
 const withRouter = () =>
@@ -141,7 +144,7 @@ describe('CharacterDetails', () => {
     vi.spyOn(hook, 'useCharacterDetails').mockReturnValue(mockCharacterData);
     withRouter();
     fireEvent.click(screen.getByRole('button', { name: /add to favorites/i }));
-    expect(useAddFavorite).toHaveBeenCalled();
+    expect(addFavoriteMock).toHaveBeenCalled();
   });
 
   test('clicking "remove from favorites" calls useRemoveFavorite', () => {
@@ -149,6 +152,6 @@ describe('CharacterDetails', () => {
     vi.spyOn(favoritesHook, 'useFavorites').mockReturnValue({ state: { favorites: ['12'] } });
     withRouter();
     fireEvent.click(screen.getByRole('button', { name: /remove from favorites/i }));
-    expect(useRemoveFavorite).toHaveBeenCalled();
+    expect(removeFavoriteMock).toHaveBeenCalled();
   });
 });

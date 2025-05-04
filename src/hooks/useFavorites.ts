@@ -1,11 +1,11 @@
 import { useFavorites } from '../context/FavoritesContext';
 
-export const useAddFavorite = (uid?: string) => {
+export const useAddFavorite = () => {
   const { dispatch } = useFavorites();
-  return () => dispatch({ type: 'ADD_FAVORITE', uid });
+  return (uid?: string) => dispatch({ type: 'ADD_FAVORITE', uid });
 };
 
-export const useRemoveFavorite = (uid?: string) => {
+export const useRemoveFavorite = () => {
   const { dispatch } = useFavorites();
-  return () => dispatch({ type: 'REMOVE_FAVORITE', uid });
+  return (uid?: string) => dispatch({ type: 'REMOVE_FAVORITE', uid });
 };
