@@ -3,7 +3,6 @@ import { MemoryRouter } from 'react-router-dom';
 import { vi } from 'vitest';
 import App from './App';
 
-// Mock the page components
 vi.mock('./pages/CharacterList', () => ({
   default: () => <div>CharacterList</div>,
 }));

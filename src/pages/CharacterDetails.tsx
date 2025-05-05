@@ -42,6 +42,7 @@ function CharacterDetails() {
           {details && Object.keys(details).length > 0 ? (
             <>
               <CharacterCard
+                uid={details.uid}
                 key={details.uid}
                 character={details.properties}
                 films={details.films}

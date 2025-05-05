@@ -6,6 +6,19 @@ export default defineConfig({
   test: {
     globals: true,
     environment: 'jsdom',
-    setupFiles: './src/test/setup.ts',
+    setupFiles: './test/setup.ts',
+    coverage: {
+      provider: 'v8',
+      reporter: ['html', 'lcov'],
+      reportsDirectory: './coverage',
+      exclude: [
+        '**/tests/**',
+        '**/*.test.*',
+        '**/*.spec.*',
+        '**/*.config.*',
+        '**/vite-env.d.ts',
+        '**/main.tsx',
+      ],
+    },
   },
 });
