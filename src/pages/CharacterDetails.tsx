@@ -16,6 +16,7 @@ function CharacterDetails() {
   const removeFromFavorite = useRemoveFavorite();
 
   const handleaddFavorite = () => {
+    if (!id) return;
     addFavorite({
       uid: details?.uid,
       properties: details?.properties,
@@ -23,6 +24,7 @@ function CharacterDetails() {
   };
 
   const handleRemoveFavorite = () => {
+    if (!id) return;
     removeFromFavorite(id);
   };
 
