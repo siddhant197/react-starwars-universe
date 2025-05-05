@@ -39,6 +39,20 @@ const TestComponent = () => {
       >
         Update Luke
       </button>
+      <button
+        onClick={() =>
+          dispatch({
+            type: 'UPDATE_FAVORITE',
+            uid: '14',
+            updates: {
+              name: 'Leina',
+            },
+          })
+        }
+      >
+        Update Leina
+      </button>
+      <button onClick={() => dispatch({ type: 'NOT_VALID', uid: '12' })}>not valid</button>
       <ul>
         {state.favorites.map((fav: Partial<Character>) => (
           <li key={fav.uid}>{fav.properties?.name}</li>
@@ -81,5 +95,40 @@ describe('FavoritesContext', () => {
     fireEvent.click(screen.getByText('Add Luke'));
     fireEvent.click(screen.getByText('Update Luke'));
     expect(screen.getByText(/luke skywalker/i)).toBeInTheDocument();
+  });
+
+  test('handles default case action type', () => {
+    render(
+      <FavoritesProvider>
+        <TestComponent />
+      </FavoritesProvider>
+    );
+
+    fireEvent.click(screen.getByText('Add Luke'));
+    fireEvent.click(screen.getByText('not valid'));
+    expect(screen.getByText('Luke')).toBeInTheDocument();
+  });
+
+  test('return character as it is during update if not found', () => {
+    render(
+      <FavoritesProvider>
+        <TestComponent />
+      </FavoritesProvider>
+    );
+
+    fireEvent.click(screen.getByText('Add Luke'));
+    fireEvent.click(screen.getByText('Update Leina'));
+    expect(screen.getByText('Luke')).toBeInTheDocument();
+  });
+
+  test('throws error when useFavorites is used outside of provider', () => {
+    const ErrorComponent = () => {
+      useFavorites();
+      return <div />;
+    };
+
+    expect(() => render(<ErrorComponent />)).toThrow(
+      'useFavorites must be used within a FavoritesProvider'
+    );
   });
 });
