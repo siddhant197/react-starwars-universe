@@ -29,7 +29,7 @@ export const useCharacters = (search: string, page: number, limit: number) => {
   } = useQuery({
     queryKey: ['characters', debouncedSearch, page],
     queryFn: () => fetchCharacters(debouncedSearch, page, limit),
-    staleTime: 60 * 60 * 1000,
+    staleTime: 24 * 60 * 60 * 1000,
     placeholderData: (previousData) => previousData,
   });
 

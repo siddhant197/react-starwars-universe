@@ -1,5 +1,7 @@
 import { CharactersResponse } from '../types/characters';
 
+const baseUrl = import.meta.env.VITE_API_BASE_URL;
+
 export const fetchCharacters = async (
   search: string = '',
   page: number = 1,
@@ -7,7 +9,7 @@ export const fetchCharacters = async (
 ): Promise<CharactersResponse> => {
   try {
     const response = await fetch(
-      `https://swapi.tech/api/people/?expanded=true&name=${search}&page=${page}&limit=${pageSize}`
+      `${baseUrl}/people/?expanded=true&name=${search}&page=${page}&limit=${pageSize}`
     );
     if (!response.ok) throw new Error('Failed to fetch characters');
 
