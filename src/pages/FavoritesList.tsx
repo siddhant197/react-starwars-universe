@@ -10,9 +10,6 @@ function FavoritesList() {
   const updateFavorite = useUpdateFavorite();
 
   const handleUpdateFavorite = (uid: string, field: string, value: string) => {
-    console.log({
-      [field]: value,
-    });
     updateFavorite(uid, {
       [field]: value,
     });
