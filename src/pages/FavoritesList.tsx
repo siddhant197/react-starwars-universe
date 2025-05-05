@@ -19,6 +19,7 @@ function FavoritesList() {
   };
 
   const handleRemoveFavorite = (uid: string) => {
+    if (!uid) return;
     removeFavorite(uid);
   };
 
@@ -41,7 +42,7 @@ function FavoritesList() {
                 fields={['height', 'gender', 'homeworldName']}
               />
               <button
-                onClick={() => handleRemoveFavorite(character.uid)}
+                onClick={() => handleRemoveFavorite(character.uid || '')}
                 className="absolute top-2 right-2 bg-red-600 hover:bg-red-700 text-white text-xs px-2 py-1 rounded transition-opacity group-hover:opacity-100"
               >
                 Remove

@@ -1,8 +1,8 @@
 import { CharacterProperties } from './characters';
 
 export interface CharacterCardProps {
-  uid: string;
-  character: CharacterProperties;
+  uid?: string;
+  character?: CharacterProperties;
   fields?: (keyof CharacterProperties)[];
   films?: string[];
   starships?: string[];
