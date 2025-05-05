@@ -1,6 +1,7 @@
 import { renderHook, act } from '@testing-library/react';
 import { useCharacters } from './useCharacters';
 import * as api from '../api/fetchCharacters';
+import * as queries from '../api/queries';
 import { vi } from 'vitest';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
@@ -46,10 +47,28 @@ const createWrapper = () => {
   );
 };
 
+const homeplanetsMock = [
+  {
+    name: 'Tatooine',
+    planet: 'stars.wars/api/planets/1',
+  },
+  {
+    name: 'Naboo',
+    planet: 'stars.wars/api/planets/2',
+  },
+];
+
 describe('useCharacters', () => {
   beforeEach(() => {
     vi.useFakeTimers();
     vi.resetAllMocks();
+
+    vi.spyOn(queries, 'useHomeplanets').mockReturnValue({
+      data: homeplanetsMock,
+      isLoading: false,
+      isFetching: false,
+      error: null,
+    } as any);
   });
 
   afterEach(() => {

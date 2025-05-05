@@ -1,9 +1,8 @@
-import { useQueries, useQuery } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { FilmResponse } from '../types/films';
 import { StarshipResponse } from '../types/starships';
 import { fetchCharacterById } from './fetchCharacterById';
-import { Character } from '../types/characters';
-import { fetchHomePlanet } from './fetchHomePlanet';
+import { HomeplanetResponse } from '../types/homeplanets';
 
 export const useCharacterProperties = (id: string) => {
   return useQuery({
@@ -46,13 +45,18 @@ export const useAllStarships = () => {
   });
 };
 
-export const useHomeworldQueries = (characterList: Character[]) => {
-  return useQueries({
-    queries: characterList.map((character) => ({
-      queryKey: ['homeworld', character.uid, character.properties.homeworld],
-      queryFn: () => fetchHomePlanet(character.properties.homeworld),
-      enabled: !!character.properties.homeworld,
-      staleTime: 60 * 60 * 1000,
-    })),
+export const useHomeplanets = () => {
+  return useQuery({
+    queryKey: ['homeplanets'],
+    queryFn: async (): Promise<HomeplanetResponse[]> => {
+      const response = await fetch('https://swapi.tech/api/planets/');
+      if (!response.ok) throw new Error('Failed to fetch planets');
+      const { results } = await response.json();
+      return results.map((planet: HomeplanetResponse) => ({
+        name: planet.name,
+        url: planet.url,
+      }));
+    },
+    staleTime: 60 * 60 * 1000,
   });
 };

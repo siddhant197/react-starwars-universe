@@ -4,11 +4,12 @@ import {
   useAllFilms,
   useAllStarships,
   useCharacterProperties,
-  useHomeworldQueries,
+  useHomeplanets,
 } from '../api/queries';
 import { FilmResponse } from '../types/films';
 import { StarshipResponse } from '../types/starships';
 import { getErrorMessage } from '../utils/getErrorMessage';
+import { HomeplanetResponse } from '../types/homeplanets';
 
 export const useCharacterDetails = (id?: string) => {
   const {
@@ -29,16 +30,20 @@ export const useCharacterDetails = (id?: string) => {
     isFetching: fetchingStarships,
     error: errorStarships,
   } = useAllStarships();
-  const homeworldQueries = useHomeworldQueries(character ? [character] : []);
-  const isHomeworldLoading = homeworldQueries.some((q) => q.isLoading);
-  const isHomeworldFetching = homeworldQueries.some((q) => q.isFetching);
+  const {
+    data: homeplanets,
+    isLoading: loadingHomeplanets,
+    isFetching: fetchingHomeplanets,
+    error: errorHomeplanets,
+  } = useHomeplanets();
 
-  const isLoading = loadingCharacter || loadingFilms || loadingStarships || isHomeworldLoading;
-  const isFetching = fetchingCharacter || fetchingFilms || fetchingStarships || isHomeworldFetching;
+  const isLoading = loadingCharacter || loadingFilms || loadingStarships || loadingHomeplanets;
+  const isFetching = fetchingCharacter || fetchingFilms || fetchingStarships || fetchingHomeplanets;
   const error =
     getErrorMessage(errorCharacter) ||
     getErrorMessage(errorFilms) ||
-    getErrorMessage(errorStarships);
+    getErrorMessage(errorStarships) ||
+    getErrorMessage(errorHomeplanets);
 
   const details: CharacterDetails | undefined = useMemo(() => {
     if (!character || !films || !starships) return undefined;
@@ -53,16 +58,20 @@ export const useCharacterDetails = (id?: string) => {
       .filter((starship: StarshipResponse) => starship.pilots.includes(characterUrl))
       .map((starship) => starship.name);
 
+    const filteredHomeworld = homeplanets?.find(
+      (homeplanet: HomeplanetResponse) => homeplanet.url === character.properties.homeworld
+    );
+
     return {
       uid: character.uid,
       properties: {
         ...character.properties,
-        homeworldName: homeworldQueries[0]?.data?.result?.properties?.name ?? 'Unknown',
+        homeworldName: filteredHomeworld?.name ?? 'Unknown',
       },
       films: filteredFilmsTitles,
       starships: filteredStarshipsNames,
     };
-  }, [character, films, starships, homeworldQueries]);
+  }, [character, films, homeplanets, starships]);
 
   return { details, isLoading, isFetching, error };
 };

@@ -20,8 +20,3 @@ export type PaginationProps = {
   totalPages: number;
   setPage: (page: number) => void;
 };
-
-export type HeaderProps = {
-  heading?: string;
-  subheading?: string;
-};

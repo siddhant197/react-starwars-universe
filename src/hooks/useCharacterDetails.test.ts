@@ -11,7 +11,7 @@ vi.mock('../utils/getErrorMessage', () => ({
 const characterMock = {
   uid: '1',
   properties: {
-    url: 'stars.wars/api/people/1',
+    url: 'star.wars/api/people/1',
     name: 'Luke',
     homeworld: 'star.wars/api/planets/1',
   },
@@ -20,18 +20,18 @@ const characterMock = {
 const filmsMock = [
   {
     title: 'A New Hope',
-    characters: ['stars.wars/api/people/1'],
+    characters: ['star.wars/api/people/1'],
   },
   {
     title: 'The Empire Strikes Back',
-    characters: ['stars.wars/api/people/2'],
+    characters: ['star.wars/api/people/2'],
   },
 ];
 
 const starshipsMock = [
   {
     name: 'X-Wing',
-    pilots: ['stars.wars/api/people/1'],
+    pilots: ['star.wars/api/people/1'],
   },
   {
     name: 'TIE Fighter',
@@ -39,17 +39,14 @@ const starshipsMock = [
   },
 ];
 
-const homeworldQueryMock = [
+const homeplanetsMock = [
   {
-    isLoading: false,
-    isFetching: false,
-    data: {
-      result: {
-        properties: {
-          name: 'Tatooine',
-        },
-      },
-    },
+    name: 'Tatooine',
+    url: 'star.wars/api/planets/1',
+  },
+  {
+    name: 'Naboo',
+    url: 'star.wars/api/planets/2',
   },
 ];
 
@@ -76,10 +73,15 @@ describe('useCharacterDetails', () => {
       error: null,
     } as any);
 
-    vi.spyOn(queries, 'useHomeworldQueries').mockReturnValue(homeworldQueryMock as any);
+    vi.spyOn(queries, 'useHomeplanets').mockReturnValue({
+      data: homeplanetsMock,
+      isLoading: false,
+      isFetching: false,
+      error: null,
+    } as any);
   });
 
-  test('character details with derived film and starship names', () => {
+  test('character details with derived film, starship and homeworld names', () => {
     const { result } = renderHook(() => useCharacterDetails('1'));
 
     expect(result.current.details).toEqual({

@@ -1,10 +1,10 @@
 import { fetchCharacters } from '../api/fetchCharacters';
-import { useQueries, useQuery } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { getErrorMessage } from '../utils/getErrorMessage';
 import { useEffect, useState } from 'react';
 import { debounce } from 'lodash';
-import { fetchHomePlanet } from '../api/fetchHomePlanet';
-import { useHomeworldQueries } from '../api/queries';
+import { useHomeplanets } from '../api/queries';
+import { HomeplanetResponse } from '../types/homeplanets';
 
 export const useCharacters = (search: string, page: number, limit: number) => {
   const [debouncedSearch, setDebouncedSearch] = useState(search);
@@ -35,29 +35,32 @@ export const useCharacters = (search: string, page: number, limit: number) => {
 
   const characterList = characters?.results ?? characters?.result ?? [];
 
-  const homeworldQueries = useHomeworldQueries(characterList);
+  const {
+    data: homeplanets,
+    isLoading: loadingHomeplanets,
+    isFetching: fetchingHomeplanets,
+    error: errorHomeplanets,
+  } = useHomeplanets();
 
-  const isHomeworldLoading = homeworldQueries.some((q) => q.isLoading);
-  const isHomeworldFetching = homeworldQueries.some((q) => q.isFetching);
-
-  const withHomeworldNames = characterList.map((character, idx) => {
-    const homeworldData = homeworldQueries[idx]?.data;
-    const homeworldName = homeworldData?.result?.properties?.name ?? 'Unknown';
+  const withHomeworldNames = characterList.map((character) => {
+    const homeworldData = homeplanets?.find(
+      (homeplanet: HomeplanetResponse) => homeplanet.url === character.properties.homeworld
+    );
 
     return {
       uid: character.uid,
       properties: {
         ...character.properties,
-        homeworldName,
+        homeworldName: homeworldData?.name ?? 'Unknown',
       },
     };
   });
 
   return {
     characters: withHomeworldNames,
-    isLoading: isLoading || isHomeworldLoading,
-    isFetching: isFetching || isHomeworldFetching,
-    error: getErrorMessage(error),
+    isLoading: isLoading || loadingHomeplanets,
+    isFetching: isFetching || fetchingHomeplanets,
+    error: getErrorMessage(error) || getErrorMessage(errorHomeplanets),
     totalPages: characters?.total_pages ?? 1,
   };
 };
