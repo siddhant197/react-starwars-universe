@@ -1,6 +1,6 @@
 # React Star Wars Universe
 
-Live Demo: [react-starwars-universe.vercel.app](https://react-starwars-universe-k5e4zs1hn-siddhant197s-projects.vercel.app/)
+Live Demo: [react-starwars-universe.vercel.app](https://react-starwars-universe.vercel.app/)
 
 A responsive, searchable and paginated web application built using **React**, **TypeScript** and the **SWAPI.tech** API to explore characters from the Star Wars universe, manage favourites and view detailed character data.
 
